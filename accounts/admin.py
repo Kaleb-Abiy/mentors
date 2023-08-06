@@ -18,4 +18,6 @@ class CustomeUserAdmin(UserAdmin):
             )}
         ),
     )
+
+    ordering = ('email',)
 admin.site.register(CustomeUser, CustomeUserAdmin)
