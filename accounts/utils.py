@@ -13,15 +13,14 @@ def get_tokens_for_user(user):
     }
 
 
-def send_email_verfication(user):
+def send_email_verfication(request, user):
     token = PasswordResetTokenGenerator()
     confirmation_token = token.make_token(user)
     email_address = user.email
     from_email = settings.EMAIL_HOST_USER
-    current_site = Site.objects.get_current()
-    domain = current_site.domain
+    domain = request.META['HTTP_HOST']
 
-    activation_link = f'{domain}/verify_email?user_id={user.id}?token={confirmation_token}'
+    activation_link = f'{domain}/auth/verify_email?user_id={user.id}&token={confirmation_token}'
 
     subject = "email verfication"
 
@@ -34,3 +33,9 @@ def send_email_verfication(user):
     )
 
     print('email sent')
+
+
+def check_confirmation_token(user, token):
+    t = PasswordResetTokenGenerator()
+    result = t.check_token(user, token)
+    return result

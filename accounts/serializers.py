@@ -26,5 +26,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             user.is_mentor = True
         elif role == 'user':
             user.is_user = True
+        user.is_active = False
         user.save()
         return user
