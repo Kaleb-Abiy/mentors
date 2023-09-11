@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomeUser
+from .models import CustomeUser, Profile
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -29,3 +29,16 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user.is_active = False
         user.save()
         return user
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ['bio', 'profile_image']
+        model = Profile
+
+    def update(self, instance, validated_data):
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.profile_image = validated_data.get(
+            'profile_image', instance.profile_image)
+        instance.save()
+        return instance

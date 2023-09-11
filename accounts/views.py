@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
-from .serializers import UserRegisterSerializer
+from .serializers import UserRegisterSerializer, ProfileSerializer
 from rest_framework.response import Response
 from django.http.response import HttpResponse
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from . utils import get_tokens_for_user, send_email_verfication, check_confirmation_token
 from django.contrib.auth import get_user_model
+from .models import CustomeUser, Profile
 
 User = get_user_model()
 
@@ -44,3 +45,16 @@ def verify_user(request):
             return HttpResponse('fail')
     except Exception as e:
         return HttpResponse(e)
+
+
+@api_view(['PUT'])
+def update_profile(request):
+    user = request.user
+    try:
+        profile = Profile.objects.get(user=user)
+        serializer = ProfileSerializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response('created')
+    except Exception as e:
+        Response('no profile with this user')
