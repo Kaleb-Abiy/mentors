@@ -27,22 +27,7 @@ class Profile(models.Model):
     bio = models.CharField(max_length=250, blank=True)
     profile_image = models.ImageField(
         upload_to='profile_images', default='default.jpg')
+    hourly_rate = models.FloatField(blank=True, null=True)
 
     def __str__(self) -> str:
         return f'{self.user.email} profile'
-
-
-SPECIALITIES = (("programming", "programming"),
-                ("cybersecurity", "cybersecurty"),
-                ("Networking", "networking"))
-
-
-class Mentor(models.Model):
-    user = models.OneToOneField(CustomeUser, on_delete=models.CASCADE)
-    field = models.CharField(max_length=200, choices=SPECIALITIES)
-    hourly_rate = models.FloatField()
-    # add availability here
-    # availablities = models.ManyToManyField()
-
-    def __str__(self):
-        return self.user.email

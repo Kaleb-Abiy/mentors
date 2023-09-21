@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
+    'feed.apps.FeedConfig',
 
     'rest_framework',
     'rest_framework_simplejwt',
