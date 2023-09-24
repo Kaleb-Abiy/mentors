@@ -22,12 +22,12 @@ class MentorFieldWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MentorField
-        fields = ['fields']
+        fields = ['fields', 'hourly_rate']
 
     def create(self, validated_data):
         fields_data = validated_data.pop('fields', [])
         mentor_field = MentorField.objects.create(
-            user=self.context['request'].user)
+            user=self.context['request'].user, hourly_rate=validated_data['hourly_rate'])
         for field_data in fields_data:
             speciality, _ = Speciality.objects.get_or_create(**field_data)
             mentor_field.fields.add(speciality)
@@ -35,8 +35,12 @@ class MentorFieldWriteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         fields_data = validated_data.pop('fields', [])
-        instance.fields.clear()
-        for field_data in fields_data:
-            speciality, _ = Speciality.objects.get_or_create(**field_data)
-            instance.fields.add(speciality)
+        if len(fields_data) > 0:
+            instance.fields.clear()
+            for field_data in fields_data:
+                speciality, _ = Speciality.objects.get_or_create(**field_data)
+                instance.fields.add(speciality)
+        instance.hourly_rate = validated_data.get(
+            'hourly_rate', instance.hourly_rate)
+        
         return instance

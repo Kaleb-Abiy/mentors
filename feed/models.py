@@ -17,9 +17,12 @@ class MentorField(models.Model):
     user = models.OneToOneField(
         User, related_name='fields', on_delete=models.CASCADE)
     fields = models.ManyToManyField(Speciality, related_name='mentors')
+    hourly_rate = models.IntegerField(blank=True)
 
     # add availability here(in other table)
     # availablities = models.ManyToManyField()
 
     def __str__(self):
         return self.user.email
+    
+    
