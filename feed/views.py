@@ -9,10 +9,23 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-
 @api_view(['GET'])
 def mentor_list(request):
+    fields = None
+    hourly_rate = None
     mentors = MentorField.objects.all()
+    fields = request.query_params.get('fields', None)
+    hourly_rate = request.query_params.get('hourly_rate', None)
+
+    if fields is not None:
+        fields_list = fields.split(',')
+        mentors = MentorField.objects.filter(fields__name__in=fields_list)
+        serializer = MentorFieldReadSerializer(mentors, many=True)
+        return Response(serializer.data)
+    if hourly_rate is not None:
+        mentors = MentorField.objects.filter(hourly_rate__lte=hourly_rate)
+        serializer = MentorFieldReadSerializer(mentors, many=True)
+        return Response(serializer.data)
     serializer = MentorFieldReadSerializer(mentors, many=True)
     return Response(serializer.data)
 
@@ -35,3 +48,11 @@ def mentor_fields_create(request):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+@api_view(['GET'])
+def mentor_detail(request, id):
+    mentor = MentorField.objects.get(id=id)
+    print(mentor)
+    serializer = MentorFieldReadSerializer(mentor)
+    return Response(serializer.data)
