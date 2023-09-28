@@ -24,5 +24,21 @@ class MentorField(models.Model):
 
     def __str__(self):
         return self.user.email
+
+
+class Availability(models.Model):
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    
+
+
+class MentorAvailabily(models.Model):
+    mentor = models.OneToOneField(User, on_delete=models.CASCADE)
+    availability = models.ManyToManyField(Availability)
+
+    def __str__(self):
+        return f'{self.mentor.email} availabilities'
+
     
     

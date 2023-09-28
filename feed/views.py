@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from . models import Speciality, MentorField
-from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer
+from . models import Speciality, MentorField, Availability, MentorAvailabily
+from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -53,6 +53,11 @@ def mentor_fields_create(request):
 @api_view(['GET'])
 def mentor_detail(request, id):
     mentor = MentorField.objects.get(id=id)
-    print(mentor)
     serializer = MentorFieldReadSerializer(mentor)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def show(request):
+    a = MentorAvailabily.objects.all()
+    s = AvailabilityReadSerializer(a, many=True)
+    return Response(s.data)
