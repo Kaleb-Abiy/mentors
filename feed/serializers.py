@@ -62,6 +62,8 @@ class AvailabilityReadSerializer(serializers.ModelSerializer):
         model= MentorAvailabily
         fields = ['mentor', 'availability']
 
+
+    
     # def get_times(self, obj):
     #     availablities = obj.availability.all()
     #     times = []
@@ -69,23 +71,51 @@ class AvailabilityReadSerializer(serializers.ModelSerializer):
     #         times.append({'start_time': availability.start_time, 'end_time': availability.end_time})
     #     return times
 
-    def to_representation(self, instance):
-        res = super().to_representation(instance)
+    # def to_representation(self, instance):
+    #     res = super().to_representation(instance)
         
-        grouped_availability = {}
-        availablities = instance.availability.all()
-        for availability in availablities:
-            if str(availability.date) not in grouped_availability:
-                grouped_availability[str(availability.date)] = []
-            grouped_availability[str(availability.date)].append(
-                {'start_time': availability.start_time, 'end_time': availability.end_time})
+    #     grouped_availability = {}
+    #     availablities = instance.availability.all()
+    #     for availability in availablities:
+    #         if str(availability.date) not in grouped_availability:
+    #             grouped_availability[str(availability.date)] = []
+    #         grouped_availability[str(availability.date)].append(
+    #             {'start_time': availability.start_time, 'end_time': availability.end_time})
         
     
             
             
-        return {
-                'mentor': instance.mentor.email,
-                'availability':grouped_availability
-        }
+    #     return {
+    #             'mentor': instance.mentor.email,
+    #             'availability':grouped_availability
+    #     }
+
+
+class AvailabilityWriteSerializer(serializers.ModelSerializer):
+    availability = AvailabilitySerializer(many=True)
+
+
+    class Meta:
+        model= MentorAvailabily
+        fields = ['availability']
+
+    def create(self, validated_data):
+        availability_data = validated_data.pop('availability', [])
+        mentor_availability = MentorAvailabily.objects.create(
+            mentor=self.context['request'].user)
+        for availability in availability_data:
+            mentor_availability.availability.add(
+                Availability.objects.create(**availability))
+        return mentor_availability
+    
+    def update(self, instance, validated_data):
+        availability_data = validated_data.pop('availability', [])
+        if len(availability_data) > 0:
+            instance.availability.clear()
+            for availability in availability_data:
+                instance.availability.add(
+                    Availability.objects.create(**availability))
+        return instance
+
   
           

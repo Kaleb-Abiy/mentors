@@ -40,5 +40,37 @@ class MentorAvailabily(models.Model):
     def __str__(self):
         return f'{self.mentor.email} availabilities'
 
+
+
+status_choices = (
+    ('pending', 'pending'),
+    ('accepted', 'accepted'),
+    ('rejected', 'rejected'),
+)
+class Appointment(models.Model):
+    booker = models.ForeignKey(User, related_name='booker_appointments', on_delete=models.CASCADE)  # booker
+    bookee = models.ForeignKey(User, related_name='bookee_appointments',on_delete=models.CASCADE)  # bookee
+    appointment_time = models.ForeignKey(Availability, on_delete=models.CASCADE)
+    status = models.CharField(max_length=200, choices=status_choices, default='pending')
+    payment = models.OneToOneField('Payment', on_delete=models.CASCADE, null=True, blank=True)
+    meeting_link = models.CharField(max_length=200, null=True, blank=True)
+
+
+    def __str__(self):
+        return f'{self.booker.email} booked {self.bookee.email} at {self.appointment_time.date} {self.appointment_time.start_time}'
+    
+
+class Payment(models.Model):
+    amount = models.IntegerField()
+    tx_ref = models.CharField(max_length=200)
+    payment_by = models.ForeignKey(User, related_name='booker_payments', on_delete=models.CASCADE)
+    payment_for = models.ForeignKey(User,related_name='bookee_payments', on_delete=models.CASCADE)
+    status = models.CharField(max_length=200, choices=status_choices, default='pending')
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.appointment.booker.email} paid {self.amount} for {self.appointment.bookee.email}'
+
+
     
     

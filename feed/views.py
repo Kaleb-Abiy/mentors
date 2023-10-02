@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from . models import Speciality, MentorField, Availability, MentorAvailabily
-from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer
+from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer, AvailabilityWriteSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -55,6 +55,25 @@ def mentor_detail(request, id):
     mentor = MentorField.objects.get(id=id)
     serializer = MentorFieldReadSerializer(mentor)
     return Response(serializer.data)
+
+@api_view(['POST', 'PUT'])
+def set_availability(request):
+    
+    try:
+        mentor_availability = MentorAvailabily.objects.get(mentor=request.user)
+    except:
+        mentor_availability = None
+    
+    if mentor_availability and request.method == 'PUT':
+        serializer = AvailabilityWriteSerializer(data=request.data, instance=mentor_availability, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        serializer = AvailabilityWriteSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 @api_view(['GET'])
 def show(request):
