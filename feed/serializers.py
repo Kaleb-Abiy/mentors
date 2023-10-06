@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from . models import MentorField, Speciality, Availability, MentorAvailabily
+from . models import MentorField, Speciality, Availability, MentorAvailabily, Appointment
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class SpecialitySerializer(serializers.ModelSerializer):
@@ -116,6 +119,47 @@ class AvailabilityWriteSerializer(serializers.ModelSerializer):
                 instance.availability.add(
                     Availability.objects.create(**availability))
         return instance
+    
+
+class AppointmentReadSerializer(serializers.ModelSerializer):
+    pass
+
+
+class AppointmentWriteSerializer(serializers.ModelSerializer):
+    booker = serializers.HiddenField(default = serializers.CurrentUserDefault())
+    appointment_time = serializers.JSONField()
+
+    class Meta:
+        model = Appointment
+        fields = ['booker', 'bookee', 'appointment_time']
+
+    
+    def validate(self, instance):
+        appointment_time = instance.get('appointment_time')
+        date = appointment_time['date']
+        start = appointment_time['start']
+        end = appointment_time['end']
+        bookee = instance.get('bookee')
+        times = Availability.objects.filter(date = date, start_time=start, end_time=end).first()
+        if not times:
+            raise serializers.ValidationError('No such time available')
+        if Appointment.objects.filter(appointment_time=times, booker = self.context['request'].user, bookee=bookee).exists():
+            raise serializers.ValidationError('you already booked with this mentor at this time')
+        return instance
+        
+
+    def create(self, validated_data):
+        appointment_time = validated_data.get('appointment_time')
+        bookee = validated_data.get('bookee')
+        date = appointment_time['date']
+        start = appointment_time['start']
+        end = appointment_time['end']
+        times = Availability.objects.filter(date = date, start_time=start, end_time=end).first()
+        print(times)
+        appointment = Appointment.objects.create(booker=validated_data['booker'], bookee=bookee, appointment_time=times)
+        return appointment
+
+
 
   
           

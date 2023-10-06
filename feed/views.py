@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from . models import Speciality, MentorField, Availability, MentorAvailabily
-from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer, AvailabilityWriteSerializer
+from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer, AvailabilityWriteSerializer, AppointmentWriteSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from .utils import make_payment
 # Create your views here.
 
 User = get_user_model()
@@ -80,3 +81,13 @@ def show(request):
     a = MentorAvailabily.objects.all()
     s = AvailabilityReadSerializer(a, many=True)
     return Response(s.data)
+
+@api_view(['POST'])
+def book_appointment(request):
+    serializer = AppointmentWriteSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        appointment = serializer.save()
+        make_payment(appointment)
+        return Response('success')
+    return Response(serializer.errors)
+
