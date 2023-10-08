@@ -1,10 +1,13 @@
 from django.shortcuts import render
-from . models import Speciality, MentorField, Availability, MentorAvailabily
+from . models import Speciality, MentorField, Availability, MentorAvailabily, Payment, Appointment
 from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer, AvailabilityWriteSerializer, AppointmentWriteSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from .utils import make_payment
+import json
+from django.conf import settings
+import requests
 # Create your views here.
 
 User = get_user_model()
@@ -90,4 +93,30 @@ def book_appointment(request):
         make_payment(appointment)
         return Response('success')
     return Response(serializer.errors)
+
+
+@api_view(['POST', 'GET'])
+def verify_payment(request):
+    data = json.loads(request.body)
+    tx = data['trx_ref']
+    print(tx)
+    if tx:
+        headers = {
+        'Authorization': f'Bearer {settings.CHAPA_SECRET}',
+        'Content-Type': 'application/json'
+        }
+
+        res = requests.get(f'https://api.chapa.co/v1/transaction/verify/{tx}', headers=headers)
+        if res.status_code == 200:
+            payment = Payment.objects.get(tx_ref=tx)
+            print(payment.appointment)
+            appointment = Appointment.objects.get(payment=payment)
+            print(appointment)
+            payment.status = 'accepted'
+            payment.save()
+            appointment.status ='accepted'
+            appointment.save()
+            
+
+    return Response(request.body)
 

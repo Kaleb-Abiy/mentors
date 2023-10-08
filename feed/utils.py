@@ -4,7 +4,8 @@ from . models import MentorField
 import random
 import string
 from django.conf import settings
-
+from .models import Payment
+from django.shortcuts import redirect
 
 def genrate_tx():
     S = 10  # number of characters in the string.  
@@ -15,6 +16,7 @@ def genrate_tx():
 
 
 def make_payment(appointment):
+    from feed.views import verify_payment
     mentor = appointment.bookee
     rate = MentorField.objects.get(user = mentor).hourly_rate
     tx = genrate_tx()
@@ -26,8 +28,7 @@ def make_payment(appointment):
         "last_name": "Gizachew",
         "phone_number": "0912345678",
         "tx_ref": tx,
-        "callback_url": "https://127.0.0.1:8000",
-        "return_url": "https://127.0.0.1:8000",
+        "callback_url": "https://9db3-196-190-60-36.ngrok-free.app/feed/verify/",
         "customization[title]": "Payment for my favourite merchant",
         "customization[description]": "I love online payments"
     })
@@ -38,3 +39,19 @@ def make_payment(appointment):
     }
     payment = requests.post(url='https://api.chapa.co/v1/transaction/initialize', data=payload,headers=headers)
     print(payment.json())
+    payment = Payment.objects.create(amount=rate, tx_ref=tx, payment_by=appointment.booker, payment_for=appointment.bookee)
+    appointment.payment = payment
+    appointment.save()
+    appointment.payment.save()
+
+
+# def verify_payment(tx):
+#     headers = {
+#     'Authorization': f'Bearer {settings.CHAPA_SECRET}',
+#     'Content-Type': 'application/json'
+#     }
+
+#     res = requests.get(f'https://api.chapa.co/v1/transaction/verify/{tx}')
+     
+#     print(res)
+        

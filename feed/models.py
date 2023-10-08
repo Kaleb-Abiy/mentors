@@ -52,7 +52,7 @@ class Appointment(models.Model):
     bookee = models.ForeignKey(User, related_name='bookee_appointments',on_delete=models.CASCADE)  # bookee
     appointment_time = models.ForeignKey(Availability, on_delete=models.CASCADE)
     status = models.CharField(max_length=200, choices=status_choices, default='pending')
-    payment = models.OneToOneField('Payment', on_delete=models.CASCADE, null=True, blank=True)
+    payment = models.OneToOneField('Payment',related_name='appointment', on_delete=models.CASCADE, null=True, blank=True)
     meeting_link = models.CharField(max_length=200, null=True, blank=True)
 
 
