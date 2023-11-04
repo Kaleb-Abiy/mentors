@@ -28,7 +28,7 @@ def make_payment(appointment):
         "last_name": "Gizachew",
         "phone_number": "0912345678",
         "tx_ref": tx,
-        "callback_url": "https://9db3-196-190-60-36.ngrok-free.app/feed/verify/",
+        "callback_url": "https://115f-196-189-240-248.ngrok-free.app//feed/verify/",
         "customization[title]": "Payment for my favourite merchant",
         "customization[description]": "I love online payments"
     })
@@ -37,12 +37,12 @@ def make_payment(appointment):
     'Authorization': f'Bearer {settings.CHAPA_SECRET}',
     'Content-Type': 'application/json'
     }
-    payment = requests.post(url='https://api.chapa.co/v1/transaction/initialize', data=payload,headers=headers)
-    print(payment.json())
+    payments = requests.post(url='https://api.chapa.co/v1/transaction/initialize', data=payload,headers=headers)
+    print(payments.json())
     payment = Payment.objects.create(amount=rate, tx_ref=tx, payment_by=appointment.booker, payment_for=appointment.bookee)
     appointment.payment = payment
     appointment.save()
-    appointment.payment.save()
+    
 
 
 # def verify_payment(tx):
