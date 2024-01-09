@@ -8,6 +8,7 @@ from .utils import make_payment, generate_zoom_link
 import json
 from django.conf import settings
 import requests
+from .tasks import send_link
 # Create your views here.
 
 User = get_user_model()
@@ -114,7 +115,8 @@ def verify_payment(request):
             print(appointment)
             start_date = appointment.appointment_time.date
             start_time = appointment.appointment_time.start_time
-            generate_zoom_link(start_date, start_time)
+            zoom_link = generate_zoom_link(start_date, start_time)
+            send_link.delay(request, appointment.booker, appointment.bookee, zoom_link)
             payment.status = 'accepted'
             payment.save()
             appointment.status ='accepted'
