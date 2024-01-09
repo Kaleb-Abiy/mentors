@@ -4,7 +4,7 @@ from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from .utils import make_payment
+from .utils import make_payment, generate_zoom_link
 import json
 from django.conf import settings
 import requests
@@ -112,6 +112,9 @@ def verify_payment(request):
             print(payment.appointment)
             appointment = Appointment.objects.get(payment=payment)
             print(appointment)
+            start_date = appointment.appointment_time.date
+            start_time = appointment.appointment_time.start_time
+            generate_zoom_link(start_date, start_time)
             payment.status = 'accepted'
             payment.save()
             appointment.status ='accepted'
