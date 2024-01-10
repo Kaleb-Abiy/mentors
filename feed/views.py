@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from . models import Speciality, MentorField, Availability, MentorAvailabily, Payment, Appointment
 from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer, AvailabilityWriteSerializer, AppointmentWriteSerializer
 from rest_framework.decorators import api_view
@@ -9,12 +10,18 @@ import json
 from django.conf import settings
 import requests
 from .tasks import send_link
+from drf_spectacular.utils import extend_schema
 # Create your views here.
 
 User = get_user_model()
 
 
+
+@extend_schema(
+    responses=MentorFieldReadSerializer
+)
 @api_view(['GET'])
+@login_required()
 def mentor_list(request):
     fields = None
     hourly_rate = None
@@ -35,7 +42,12 @@ def mentor_list(request):
     return Response(serializer.data)
 
 
+@extend_schema(
+    request=MentorFieldWriteSerializer,
+    responses=MentorFieldWriteSerializer
+)
 @api_view(['POST', 'PUT'])
+@login_required()
 def mentor_fields_create(request):
     try:
         mentor_field = MentorField.objects.get(user=request.user)
@@ -55,13 +67,23 @@ def mentor_fields_create(request):
         return Response(serializer.data)
 
 
+@extend_schema(
+    responses=MentorFieldReadSerializer
+)
 @api_view(['GET'])
+@login_required()
 def mentor_detail(request, id):
     mentor = MentorField.objects.get(id=id)
     serializer = MentorFieldReadSerializer(mentor)
     return Response(serializer.data)
 
+
+@extend_schema(
+    request=AvailabilityWriteSerializer,
+    responses=AvailabilityWriteSerializer
+)
 @api_view(['POST', 'PUT'])
+@login_required()
 def set_availability(request):
     
     try:
@@ -80,13 +102,24 @@ def set_availability(request):
         serializer.save()
         return Response(serializer.data)
 
+
+@extend_schema(
+    responses=AvailabilityReadSerializer
+)
 @api_view(['GET'])
+@login_required()
 def show(request):
     a = MentorAvailabily.objects.all()
     s = AvailabilityReadSerializer(a, many=True)
     return Response(s.data)
 
+
+@extend_schema(
+    request=AppointmentWriteSerializer,
+    responses=AppointmentWriteSerializer
+)
 @api_view(['POST'])
+@login_required()
 def book_appointment(request):
     serializer = AppointmentWriteSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
