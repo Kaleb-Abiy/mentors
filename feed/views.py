@@ -18,6 +18,7 @@ User = get_user_model()
 
 
 @extend_schema(
+    description='Lists all the available mentors with thier detail it also accepts query params to search mentors by name,speciality,hourly_rate',
     responses=MentorFieldReadSerializer
 )
 @api_view(['GET'])
@@ -43,6 +44,7 @@ def mentor_list(request):
 
 
 @extend_schema(
+    description='Creates a new mentor speciality or updates an existing one',
     request=MentorFieldWriteSerializer,
     responses=MentorFieldWriteSerializer
 )
@@ -68,6 +70,7 @@ def mentor_fields_create(request):
 
 
 @extend_schema(
+    description='Returns a single mentor with thier detail',
     responses=MentorFieldReadSerializer
 )
 @api_view(['GET'])
@@ -79,6 +82,7 @@ def mentor_detail(request, id):
 
 
 @extend_schema(
+    description='Creates a new mentor availability or updates an existing one',    
     request=AvailabilityWriteSerializer,
     responses=AvailabilityWriteSerializer
 )
@@ -104,6 +108,7 @@ def set_availability(request):
 
 
 @extend_schema(
+    description='Returns all the mentor availabilities',
     responses=AvailabilityReadSerializer
 )
 @api_view(['GET'])
@@ -115,6 +120,7 @@ def show(request):
 
 
 @extend_schema(
+    description='Creates a new appointment',    
     request=AppointmentWriteSerializer,
     responses=AppointmentWriteSerializer
 )
