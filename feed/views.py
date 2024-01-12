@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from . models import Speciality, MentorField, Availability, MentorAvailabily, Payment, Appointment
-from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer, AvailabilityWriteSerializer, AppointmentWriteSerializer
+from .serializers import MentorFieldReadSerializer, MentorFieldWriteSerializer, AvailabilityReadSerializer, AvailabilityWriteSerializer, AppointmentWriteSerializer, AppointmentReadSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -133,6 +133,21 @@ def book_appointment(request):
         make_payment(appointment)
         return Response('success')
     return Response(serializer.errors)
+
+
+@extend_schema(
+    description='List all apointments',
+    responses=AppointmentReadSerializer
+)
+
+@api_view(['GET',])
+@login_required()
+def list_appointments(request):
+    appointments = Appointment.objects.filter(booker=request.user)
+    for app in appointments:
+        print(app.appointment_time)
+    serializer = AppointmentReadSerializer(appointments, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['POST', 'GET'])

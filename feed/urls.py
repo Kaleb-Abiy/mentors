@@ -7,6 +7,7 @@ urlpatterns = [
     path('update_speciality/', views.mentor_fields_create, name='mentor_fields_create'),
     path('set_availability/', views.set_availability, name='set_availability'),
     path('show_availability/', views.show, name='show'),
+    path('appointment_list', views.list_appointments, name='appointment_list'),
     path('book/', views.book_appointment, name='book_appointment'),
     path('verify/', views.verify_payment, name='verify_payment'),
 ]

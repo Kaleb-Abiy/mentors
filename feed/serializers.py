@@ -122,7 +122,12 @@ class AvailabilityWriteSerializer(serializers.ModelSerializer):
     
 
 class AppointmentReadSerializer(serializers.ModelSerializer):
-    pass
+    booker = serializers.CharField(source='booker.email', read_only=True)
+    bookee = serializers.CharField(source='bookee.email', read_only=True)
+    appointment_time = AvailabilitySerializer(many=False, read_only=True)
+    class Meta:
+        model = Appointment
+        exclude = ['payment']
 
 
 class AppointmentWriteSerializer(serializers.ModelSerializer):
