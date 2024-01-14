@@ -170,11 +170,13 @@ def verify_payment(request):
             start_date = appointment.appointment_time.date
             start_time = appointment.appointment_time.start_time
             zoom_link = generate_zoom_link(start_date, start_time)
-            send_link.delay(request, appointment.booker, appointment.bookee, zoom_link)
             payment.status = 'accepted'
             payment.save()
             appointment.status ='accepted'
+            appointment.meeting_link = zoom_link['meeting_url']
             appointment.save()
+            send_link.delay(request, appointment.booker, appointment.bookee, zoom_link)
+           
             
 
     return Response(request.body)

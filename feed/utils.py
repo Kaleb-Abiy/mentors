@@ -15,8 +15,8 @@ def genrate_tx():
     return ran  
 
 
-def make_payment(appointment):
-    from feed.views import verify_payment
+def make_payment(request, appointment):
+    host = request.META['HTTP_HOST']
     mentor = appointment.bookee
     rate = MentorField.objects.get(user = mentor).hourly_rate
     tx = genrate_tx()
@@ -28,7 +28,7 @@ def make_payment(appointment):
         "last_name": "Gizachew",
         "phone_number": "0912345678",
         "tx_ref": tx,
-        "callback_url": "https://115f-196-189-240-248.ngrok-free.app//feed/verify/",
+        "callback_url": f"https://{host}/mentors/verify/",
         "customization[title]": "Payment for my favourite merchant",
         "customization[description]": "I love online payments"
     })
@@ -62,7 +62,7 @@ def generate_zoom_link(start_date, start_time):
         print("Unable to get access token")
     response_data = response.json()
     access_token = response_data["access_token"]
-    
+    print(access_token)
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json"
