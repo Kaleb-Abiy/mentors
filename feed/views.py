@@ -130,7 +130,7 @@ def book_appointment(request):
     serializer = AppointmentWriteSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         appointment = serializer.save()
-        make_payment(appointment)
+        make_payment(request, appointment)
         return Response('success')
     return Response(serializer.errors)
 
