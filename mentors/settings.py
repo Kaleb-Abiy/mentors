@@ -37,10 +37,11 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'web-production-b715.up.railway.app',
-                 'http://web-production-b715.up.railway.app', 'https://web-production-b715.up.railway.app']
+ALLOWED_HOSTS = ['*',]
 
 
+CSRF_TRUSTED_ORIGINS = ['http://web-production-b715.up.railway.app',
+                        'https://web-production-b715.up.railway.app']
 # Application definition
 
 INSTALLED_APPS = [
