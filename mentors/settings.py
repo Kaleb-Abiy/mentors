@@ -101,7 +101,7 @@ db_pass = env('DB_PASSWORD')
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f'postgresql://postgres:{db_pass}@postgres.railway.internal:5432/railway',
+        default=f'postgresql://postgres:{db_pass}@viaduct.proxy.rlwy.net:5432/railway',
         conn_max_age=600,
         conn_health_checks=True,
     )
