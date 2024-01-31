@@ -120,6 +120,18 @@ def show(request):
 
 
 @extend_schema(
+    description='Returns single mentor availabilities',
+    responses=AvailabilityReadSerializer
+)
+@api_view(['GET'])
+def show_single_availability(request, mentor_id):
+    a = MentorAvailabily.objects.get(mentor__id=mentor_id)
+    s = AvailabilityReadSerializer(a)
+    return Response(s.data)
+
+
+
+@extend_schema(
     description='Creates a new appointment',    
     request=AppointmentWriteSerializer,
     responses=AppointmentWriteSerializer
