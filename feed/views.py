@@ -125,7 +125,8 @@ def show(request):
 )
 @api_view(['GET'])
 def show_single_availability(request, mentor_id):
-    a = MentorAvailabily.objects.get(mentor__id=mentor_id)
+    mentor = User.objects.get(id=mentor_id)
+    a = MentorAvailabily.objects.get(mentor=mentor)
     s = AvailabilityReadSerializer(a)
     return Response(s.data)
 
