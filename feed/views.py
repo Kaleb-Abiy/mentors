@@ -124,8 +124,8 @@ def show(request):
     responses=AvailabilityReadSerializer
 )
 @api_view(['GET'])
-def show_single_availability(request, mentor_id):
-    mentor = User.objects.get(id=mentor_id)
+def show_single_availability(request, id):
+    mentor = MentorField.objects.get(id=id).user
     a = MentorAvailabily.objects.get(mentor=mentor)
     s = AvailabilityReadSerializer(a)
     return Response(s.data)
