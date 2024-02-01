@@ -5,6 +5,14 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+
+class CustomeUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'email']
+
+
 class SpecialitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Speciality
@@ -12,7 +20,7 @@ class SpecialitySerializer(serializers.ModelSerializer):
 
 
 class MentorFieldReadSerializer(serializers.ModelSerializer):
-    user = serializers.CharField(source='user.email', read_only=True)
+    user = CustomeUserSerializer(read_only=True)
     fields = SpecialitySerializer(many=True, read_only=True)
 
     class Meta:
