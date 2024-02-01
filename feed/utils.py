@@ -42,6 +42,7 @@ def make_payment(request, appointment):
     payment = Payment.objects.create(amount=rate, tx_ref=tx, payment_by=appointment.booker, payment_for=appointment.bookee)
     appointment.payment = payment
     appointment.save()
+    return payments.json()
 
 
 

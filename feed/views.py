@@ -144,6 +144,7 @@ def book_appointment(request):
     if serializer.is_valid():
         appointment = serializer.save()
         res = make_payment(request, appointment)
+        print(res)
         return Response(res)
     return Response(serializer.errors)
 
