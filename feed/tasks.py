@@ -8,8 +8,7 @@ def send_link(request, user, mentor, link):
     user_email_address = user.email
     mentor_email_address = mentor.email
     from_email = settings.EMAIL_HOST_USER
-    domain = request.META['HTTP_HOST']
-    subject = "Zoom link"
+    subject = "Zoom link for your appointment"
     send_mail(
         subject,
         link,
