@@ -160,6 +160,9 @@ class AppointmentWriteSerializer(serializers.ModelSerializer):
         times = Availability.objects.filter(date = date, start_time=start, end_time=end).first()
         if not times:
             raise serializers.ValidationError('No such time available')
+        if times:
+            if not MentorAvailabily.objects.filter(mentor=bookee, availability=times).exists():
+                raise serializers.ValidationError('The mentor is not available at this time')
         if Appointment.objects.filter(appointment_time=times, booker = self.context['request'].user, bookee=bookee).exists():
             raise serializers.ValidationError('you already booked with this mentor at this time')
         return instance
