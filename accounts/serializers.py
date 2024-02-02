@@ -13,7 +13,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if (attrs['password1'] != attrs['password2']):
-            raise serializers.ValidationError('password dont match')
+            return serializers.ValidationError('password dont match')
         return super().validate(attrs)
 
     def create(self, validated_data):
