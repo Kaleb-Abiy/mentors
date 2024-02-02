@@ -43,7 +43,7 @@ def register_user(request):
         tokens = get_tokens_for_user(user)
         return Response(tokens, status=status.HTTP_201_CREATED)
     else:
-        return Response(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def verify_user(request):
