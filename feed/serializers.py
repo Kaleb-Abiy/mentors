@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from . models import MentorField, Speciality, Availability, MentorAvailabily, Appointment
 from django.contrib.auth import get_user_model
+from datetime import datetime, timedelta
 
 User = get_user_model()
 
@@ -151,7 +152,10 @@ class AppointmentWriteSerializer(serializers.ModelSerializer):
         appointment_time = instance.get('appointment_time')
         date = appointment_time['date']
         start = appointment_time['start']
-        end = appointment_time['end']
+        fixed_date = datetime.now().date()
+        combined = datetime.combine(fixed_date, datetime.strptime(start, '%H:%M:%S').time())
+        added_time = combined + timedelta(hours=1) #add 1 hour to start time to get end time
+        end = datetime.strftime(added_time, '%H:%M:%S')
         bookee = instance.get('bookee')
         times = Availability.objects.filter(date = date, start_time=start, end_time=end).first()
         if not times:
@@ -166,7 +170,10 @@ class AppointmentWriteSerializer(serializers.ModelSerializer):
         bookee = validated_data.get('bookee')
         date = appointment_time['date']
         start = appointment_time['start']
-        end = appointment_time['end']
+        fixed_date = datetime.now().date()
+        combined = datetime.combine(fixed_date, datetime.strptime(start, '%H:%M:%S').time())
+        added_time = combined + timedelta(hours=1) #add 1 hour to start time to get end time
+        end = datetime.strftime(added_time, '%H:%M:%S')
         times = Availability.objects.filter(date = date, start_time=start, end_time=end).first()
         print(times)
         appointment = Appointment.objects.create(booker=validated_data['booker'], bookee=bookee, appointment_time=times)
