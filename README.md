@@ -1,6 +1,6 @@
 # Mentorship API
 
-This API connects users with mentor. It is developed using Django rest framework. You can find the api [here]([https://recipe-backend-api.herokuapp.com/](https://web-production-b715.up.railway.app/api/schema/docs/).
+This API connects users with mentor. It is developed using Django rest framework. You can find the api [here]([https://web-production-b715.up.railway.app/api/schema/docs/].
 
 ## Basic Features
 
